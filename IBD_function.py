@@ -4,6 +4,7 @@ Created on Sat Oct 16 18:19:21 2021
 
 @author: Gummy (Chien-Jung Huang)
 """
+
 # Based
 import pandas as pd
 import numpy as np
@@ -25,7 +26,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 
 def filtering_testing_compounds(ac50_M_train_done, ac50_M_test_done, label, p=0.05, bonferroni_step=True, adjp=0.05):
-    # Filter low correlation
+    # Filter low correlated test compounds
     # (Bonferroni-corrected p-value < 0.05, Spearman correlation) with IBD compounds (training data)
     compounds = []
     for i in range(len(ac50_M_test_done.index)):
@@ -51,20 +52,10 @@ def filtering_testing_compounds(ac50_M_train_done, ac50_M_test_done, label, p=0.
 
 
 def AC50_M_dropna(ac50_M, label, percentage=0.75, filtering_by_3groups=False, filtering_only_2step=False):
-    # =============================================================================
-    # Data filtering and preprocessing
-    # ac50_M: colunms=bioassays; row=compounds
-    # label: columns=['ChemName', 'effect in IBD zebrafish model']; row=compounds
-    # percentage: NA filtering percentage
-    # filtering_by_3groups: whether filtering by 3 groups of training data
-    # filtering_only_2step: whether filtering only 2 step (without filtering the bioassays of AC50_M)
-    
-    # Function return: ac50_M_f, ac50_M_train, ac50_M_test (after filtering NA)
-    # =============================================================================
     # Training data
-    ac50_M_train = ac50_M[ac50_M.index.isin(label.index)] #39x1569
+    ac50_M_train = ac50_M[ac50_M.index.isin(label.index)] #49x1569
     # Testing data
-    ac50_M_test = ac50_M[ac50_M.index.isin(label.index) != True] #9259x1569
+    ac50_M_test = ac50_M[ac50_M.index.isin(label.index) != True] #9249x1569
     
     # Filter training data (first filtering)
     # The bioassays with more than X% missing values in training data
@@ -157,7 +148,7 @@ def undersampling_by_eigen(ac50_M_train_done, label, numbers_of_under, method= '
             plt.plot(range(1, len(no_effect32.columns)), no_effect32.loc[i][1:], color='grey')
         plt.plot(range(1, len(no_effect32.columns)), eigen_compounds_svd, color='black', label='eigen-compound')
         plt.xlabel('Bioassays (' + str(len(ac50_M_train_done.columns)-1) + ')')
-        plt.ylabel('Abundance for 31 no effect compounds')
+        plt.ylabel('Abundance for 32 no effect compounds')
         plt.legend()
         plt.tight_layout()
         plt.show()
@@ -167,7 +158,7 @@ def undersampling_by_eigen(ac50_M_train_done, label, numbers_of_under, method= '
             plt.plot(range(1, len(no_effect32.columns)), no_effect32.loc[i][1:], color='grey')
         plt.plot(range(1, len(no_effect32.columns)), eigen_compounds_svd, color='black', label='eigen-compound')
         plt.xlabel('Bioassays (' + str(len(ac50_M_train_done.columns)-1) + ')')
-        plt.ylabel('Abundance for 31 no effect compounds')
+        plt.ylabel('Abundance for 32 no effect compounds')
         plt.legend()
         plt.tight_layout()
         plt.show()
@@ -225,7 +216,7 @@ def undersampling_by_eigen(ac50_M_train_done, label, numbers_of_under, method= '
         plt.legend()
         plt.tight_layout()
         plt.show()
-        plt.savefig(out_path + 'PCA_trainingset_29+eigenc(svd).tif', dpi=300, bbox_inches='tight')
+        plt.savefig(out_path + 'PCA_trainingset(No_effect)+eigenc(svd).tif', dpi=300, bbox_inches='tight')
     return(top_no)
 
 
